@@ -73,6 +73,8 @@ Use these layers consistently:
 
 `content_report.md` supports the 3 core planning files; it does not replace them. `spec_lock.md` is always the last core planning file.
 
-## Legacy Assets
+## Removed Workflow UI
 
-The bundled `assets/preview_shell/`, `assets/candidate_picker_shell/`, `assets/review_shell/` and `scripts/render_review_markup.py` are retained for reference only. This workflow no longer uses any HTML shell or coordinate-markup payload; do not reintroduce them unless the user explicitly asks for a browser-based variant.
+This branch removed the former HTML workflow shells and the coordinate-markup review pipeline. There are no bundled preview, candidate-picker, or review pages, and no review-markup script. Previews, candidate selection, and review are all folder-based and chat-based.
+
+Do not recreate those HTML pages or a coordinate-markup review payload unless the user explicitly asks for a browser-based variant.

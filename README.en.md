@@ -218,7 +218,7 @@ This branch removed the HTML workflow shells in favor of folders plus chat:
 | Final pages (single) | `slides/` | `S01.png`, `S02.png` |
 | Final pages (multi) | `slides_candidates/` | `S01-01.png`, `S01-02.png`; the user replies with the chosen code in chat |
 
-The former `assets/preview_shell/`, `assets/candidate_picker_shell/`, `assets/review_shell/` and `scripts/render_review_markup.py` are kept in the repository for reference only and are no longer used by the workflow.
+This branch removed the former HTML workflow shells and the review-markup script (`preview_shell`, `candidate_picker_shell`, `review_shell`, and `render_review_markup.py`); they are no longer in the repository. Preview, candidate selection, and review are all folder-based and chat-based. Do not recreate those pages unless the user explicitly asks for a browser-based variant.
 
 ---
 
@@ -285,10 +285,6 @@ ppt-image-first/
 │  ├─ design_spec_reference.md
 │  ├─ slide_blueprint_reference.md
 │  └─ spec_lock_reference.md
-└─ assets/
-   ├─ preview_shell/          (legacy, unused)
-   ├─ candidate_picker_shell/ (legacy, unused)
-   └─ review_shell/           (legacy, unused)
 ```
 
 ---

@@ -230,7 +230,7 @@
 | 最终页（单候选） | `slides/` | `S01.png`、`S02.png` |
 | 最终页（多候选） | `slides_candidates/` | `S01-01.png`、`S01-02.png`，用户在对话里回复选中的编号 |
 
-原 `assets/preview_shell/`、`assets/candidate_picker_shell/`、`assets/review_shell/` 与 `scripts/render_review_markup.py` 保留在仓库中仅作参考，工作流不再使用。
+本分支已移除原 HTML 工作流壳子和对应的标注脚本（`preview_shell`、`candidate_picker_shell`、`review_shell` 与 `render_review_markup.py`），仓库中不再包含这些文件。预览、选图、评审全部走文件夹 + 对话；除非用户明确要求浏览器版，不要再重建这些页面。
 
 ---
 
@@ -297,10 +297,6 @@ ppt-image-first/
 │  ├─ design_spec_reference.md
 │  ├─ slide_blueprint_reference.md
 │  └─ spec_lock_reference.md
-└─ assets/                 (legacy, unused by the workflow)
-   ├─ preview_shell/
-   ├─ candidate_picker_shell/
-   └─ review_shell/
 ```
 
 ---
