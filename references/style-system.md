@@ -6,7 +6,7 @@ Do not rely on rigid templates as the primary style system for PPT visual design
 Use a parameterized style vector internally, then synthesize multiple coherent style proposals.
 
 This rule is about the deck's visual language, not about workflow UI files.
-The bundled preview/review HTML shells in `assets/preview_shell/index.html` and `assets/review_shell/index.html` remain mandatory workflow assets unless unavailable or explicitly overridden by the user.
+This workflow has no workflow UI files: previews, candidate selection, and review are all folder-based and chat-based. Do not reintroduce an HTML shell for those stages unless the user explicitly asks for a browser-based variant.
 
 ## Style vectors
 
@@ -48,9 +48,15 @@ Do not describe body pages as one fixed layout. Describe the body-page **visual 
 
 ## Intra-direction continuity
 
-Within one style direction, the 3 preview pages must read as one visual family rather than 3 loosely related images.
+Within one style direction, the deck's pages must read as one visual family rather than loosely related images.
 
-This continuity should come from a shared visual system, including as appropriate:
+Because the preview stage produces only one `正文页` image per direction, continuity across page roles cannot be verified visually at preview time.
+That means:
+- the single preview image defines the direction's body-page visual grammar
+- cover, TOC, and multi-page rhythm consistency is carried by the planning files and the deck-level continuity anchor, not by preview evidence
+- do not claim that a direction is "verified consistent across page roles" when only the body page was generated
+
+Continuity should come from a shared visual system, including as appropriate:
 - the same or clearly related color palette
 - the same lighting logic and depth behavior
 - the same material language
@@ -65,26 +71,26 @@ Allowed variation:
 - the body page may be more informational
 
 Not allowed:
-- changing the style language so much that the 3 pages look like different template families
+- changing the style language so much that pages look like different template families
 - introducing a new material system or illustration language only on one page
 - making the cover futuristic, the TOC editorial, and the body dashboard-heavy unless that transition still clearly belongs to one shared system
 
-Think of each direction as one deck identity expressed across 3 page roles, not 3 separate design attempts.
+Think of each direction as one deck identity expressed across page roles, not separate design attempts.
 
 ## Deck-level continuity anchor
 
-After one style direction is confirmed, do one short reverse-engineering pass on the selected `首页 / 目录页 / 正文页` before writing planning files or generating final visuals.
+After one style direction is confirmed, do one short reverse-engineering pass on the selected preview before writing planning files or generating final visuals.
 
-Use that pass to infer what the chosen direction became in the actual images, not just what the prompt originally asked for.
+Use that pass to infer what the chosen direction became in the actual image, not just what the prompt originally asked for.
 The confirmed continuity anchor should therefore be based on:
-- the selected preview images as the primary evidence
+- the selected preview image as the primary evidence
 - the original generation prompt as supporting context
 - the user's confirmation of which extracted elements they actually want to preserve
 
 After that, convert the direction into a single deck-level continuity anchor.
 
 This anchor must be explicit enough that every later slide can inherit it.
-At minimum it should lock:
+At minimum it should lock what the preview actually shows:
 - base brightness range and background tendency
 - dominant palette and secondary palette roles
 - lighting model and depth strength
@@ -93,6 +99,8 @@ At minimum it should lock:
 - decoration grammar
 - title / label / emphasis tone
 - restraint vs expressiveness level
+
+For aspects the preview never covered — cover atmosphere, TOC structure, cross-page rhythm — write them as intent derived from the proposal card and content basis, and mark them as unverified rather than locked evidence.
 
 Use this anchor to prevent "same style but different mood" drift.
 For example, do not let one slide become dark, glossy, and high-contrast while the next becomes bright, airy, and nearly flat unless that range was explicitly defined as part of the confirmed system.
@@ -114,3 +122,5 @@ Each style proposal must stay lightweight:
 - risk note
 
 The proposal card is only the presentation interface. It must not constrain the creative generation process.
+
+The cover direction in the card is a stated design intent. It is not backed by a generated cover preview, because the preview stage produces only a body page.

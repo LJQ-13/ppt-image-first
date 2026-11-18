@@ -6,7 +6,7 @@ Use this file as the pre-style content basis when the user has not already provi
 
 This file should be created after `需求确认` and before style-boundary alignment.
 Its job is to turn the user's topic, scattered notes, or partial material into a small research-style report / report-like article that is strong enough to support:
-- later `首页 / 目录页 / 正文页` previews
+- the later single `正文页` style preview per direction
 - `design_spec.md`
 - `slide_blueprint.md`
 - `spec_lock.md`

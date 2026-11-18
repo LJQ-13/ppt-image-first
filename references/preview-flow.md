@@ -6,85 +6,62 @@ The preview stage lets the user judge a style direction visually before planning
 
 ## Fixed preview set
 
-Each style direction must generate exactly 3 preview pages as **real image previews**.
-Unless the user explicitly asks for another presentation format, those previews must be generated in a `16:9` slide ratio rather than a generic illustration ratio such as `3:2`.
-These 3 pages must also preserve strong intra-direction continuity so the user can judge one coherent style system rather than 3 loosely related outputs:
+Each style direction must generate exactly **1 preview image**.
 
-1. `首页`
-   - checks first impression
-   - checks main visual and composition
-   - checks tone and metaphor
+- The preview page role is `正文页` (body page) by default.
+- Reason: the body page is the only page role that shows visual style and content carrying capacity at the same time. A cover mainly shows atmosphere, and a TOC page mainly shows structure.
+- All directions presented in the same round must use the same page role so the comparison stays fair.
+- The image must be generated in a `16:9` slide ratio unless the user explicitly asks for another presentation format.
 
-2. `目录页`
-   - checks structure and hierarchy
-   - checks whether the style can support a system page
-   - checks the transition from cover into content
-
-3. `正文页`
-   - checks whether the style can actually carry information
-   - checks readability and emphasis
-   - checks whether the visual grammar survives real content
-
-A valid preview page must contain plausible filled content rather than placeholder-only structure.
+A valid preview image must contain plausible filled content rather than placeholder-only structure.
 That means:
+- believable headings, bullets, labels, cards, numbers, or relationships with enough content to judge usability
 - do not generate placeholder text such as “在此输入…”, “title here”, “lorem ipsum”, or empty label boxes intended to be filled later
 - do not generate large empty containers, blank dashboard shells, or decorative modules with no real information inside
-- do not silently switch to textless image generation just to avoid text rendering problems when the preview page is supposed to demonstrate content structure
-- the TOC page should show believable section titles or navigational items
-- the body page should show believable headings, bullets, labels, cards, numbers, or relationships with enough content to judge usability
-- the cover may stay lighter in information density, but it still should not contain obvious placeholder copy
+- do not silently switch to textless image generation just to avoid text rendering problems
 
 Text sketches, ASCII boxes, pseudo-layouts, and purely verbal examples do **not** count as previews in this workflow.
 
 If `content_report.md` or another approved content-basis summary exists, preview content must draw from it.
 That means:
-- the cover should reflect the content thesis or core framing rather than only a decorative topic shell
-- the TOC page should reflect the narrative chain or section candidates rather than a generic chapter list
 - the body page should use page-content candidates, visualizable content, or report-derived arguments rather than generic filler structure
 - do not create a second unrelated topic outline during preview generation when a content basis already exists
 - if part of the preview content is inferred rather than user-provided, keep it general and avoid unsupported precise claims
 
-## Comparison principle
+## Delivery
 
-The number of style directions may vary by user preference, but all proposed directions should use the same 3 preview page types so the user can compare them fairly.
+- Write preview images into a local folder, for example `<project>/previews/`.
+- Filenames must map cleanly to direction codes, for example `A_正文页.png`, `B_正文页.png`, `C_正文页.png`.
+- Refinement rounds use a round prefix, for example `R2_A_正文页.png`.
+- After the images are written, give the user the absolute folder path. The folder is the comparison surface.
+- Do not assemble a preview HTML page, do not open a browser, and do not create any replacement preview UI.
 
 ## Presentation principle
 
-Use the bundled preview shell at `assets/preview_shell/index.html` by default.
-Treat it as the required workflow UI shell, not as optional inspiration.
-For each style direction, show:
+For each style direction, show in chat:
 - the lightweight proposal card text
-- the 3 preview pages beside or under it
+- the preview filename that maps to that direction
 
-Do not create a replacement preview shell, a lookalike HTML page, or a fresh preview interface from scratch just because it feels easier.
-Only depart from the bundled shell if that asset is genuinely unavailable or the user explicitly asks for a different interface, and if that happens, say so clearly.
+Do not ask the user to open images one by one; they can browse the folder directly.
+Do not describe the cover direction as if the user has already seen it — only the body page has been previewed.
 
-After the HTML shell is filled, immediately attempt to open that local page for the user so they can compare directions directly instead of opening raw files themselves.
-Treat this open action as part of the default preview workflow.
-If automatic opening fails, say that explicitly, explain the blocker, and provide the file path as fallback.
+## Comparison principle
 
-## Candidate-picker and review-shell continuity
+The number of style directions may vary by user preference, but all directions in the same round must use the same page role so the user can compare them fairly.
 
-If the workflow later enters optional multi-candidate final selection, use the bundled candidate-picker shell at `assets/candidate_picker_shell/index.html` by default.
-Do not switch to a visually unrelated candidate-selection page, and do not create a visually similar but separate candidate-picker shell from scratch.
-The intended continuity is achieved by reusing the bundled candidate-picker shell itself, not by inventing another page that merely resembles the preview shell.
+## Coverage note
 
-When the workflow later enters final review and retouch, use the bundled review shell at `assets/review_shell/index.html` by default.
-Do not switch to a visually unrelated review page, and do not create a visually similar but separate review shell from scratch.
-The intended continuity is achieved by reusing the bundled review shell itself, not by inventing another page that merely resembles the preview shell.
-
-The review HTML should:
-- preserve the same overall design family, spacing rhythm, panel language, and image presentation logic
-- replace style-comparison emphasis with page-by-page review emphasis
-- make it easy to inspect one page, leave feedback, and then compare refreshed results after edits
-- keep image review primary rather than burying the visuals under large control panels
+Because only a body page is previewed:
+- cover-specific and TOC-specific style claims remain design intent, not verified preview evidence
+- do not lock cover atmosphere, TOC structure, or multi-page rhythm as facts derived from the preview
+- the planning files should record this coverage limit explicitly
 
 ## Hard rule
 
 Style selection should default to preview-first.
 That means:
 - do not jump directly from proposal text to asking the user to choose a final direction
-- first show the previews when generation is possible
+- first show the preview images when generation is possible
 - previews should be generated as real images by default
 - if real image previews are not yet available, explicitly tell the user that preview display is part of the workflow and say what is blocking it right now
 
@@ -107,9 +84,9 @@ That means:
 - generate the planned preview set directly instead of repeatedly testing one image at a time unless the generation path itself is unverified
 - at most one minimal chain check is enough when the local generation path has not yet been confirmed in the current turn
 - after the chain is confirmed, generate the remaining previews in batch without repeated intermediate spot-check loops
-- do not regenerate pages just to slightly improve one candidate unless the result is clearly broken, unreadable, or off-direction
+- do not regenerate an image just to slightly improve a candidate unless the result is clearly broken, unreadable, or off-direction
 - do not run multiple rounds of manual re-checking before showing the user the preview set
-- once each direction has a usable `首页 / 目录页 / 正文页`, assemble the preview page and show it
+- once each direction has a usable preview image, write the files and give the user the folder path
 - apply the same speed rule during style refinement rounds; refinement is another comparison loop, not a polishing detour
 
 Favor speed, comparability, and directionality over internal perfectionism at this stage.

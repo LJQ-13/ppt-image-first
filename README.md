@@ -8,6 +8,8 @@
 
 > **说明：输出方式是 image-first。** 这套 workflow 默认使用 **GPT Image 2** 生成整页视觉图，再把这些页面图放入 PPTX 容器中交付；它不是直接用 PowerPoint 对象逐个绘制文字框、形状和图表的“完全可编辑 PPT”生成器。因此，成品更接近高完成度视觉稿式演示页：适合展示、汇报和继续做图像级 retouch，但页面内的文字、图形、装饰元素通常不能像原生 PPT 元素一样逐项编辑。
 
+> **流程差异提示（本分支）。** 文档中的示例图与 demo PPT 来自原始"三页预览 + HTML 工作流"版本，仅作视觉风格参考；实际流程以本 README 中的文件夹约定与 `SKILL.md` 为准。
+
 ## 示例速览
 
 ### 1. 工作流总览示意图
@@ -54,14 +56,14 @@
 3. 进入 **需求确认**
 4. 生成风格前内容基底 / `content_report.md`
 5. 做风格边界对齐
-6. 产出多套风格方向预览
+6. 产出多套风格方向预览（每方向一张正文页图，输出到文件夹）
 7. 必要时继续风格 refinement
 8. 进入 **风格确认**
 9. 做 `风格反演确认`
 10. 写规划文件
 11. 进入 **生成前确认**
 12. 选择生成分支
-13. 进入 review & retouch loop
+13. 进入 review & retouch loop（文件夹看图 + 对话提意见）
 14. 最终导出
 
 ---
@@ -114,9 +116,7 @@
 
 这样后面的：
 
-- 首页预览
-- 目录页预览
-- 正文页预览
+- `正文页` 风格预览图
 - `design_spec.md`
 - `slide_blueprint.md`
 - `spec_lock.md`
@@ -127,11 +127,11 @@
 
 它不会让用户直接在文字里选最终风格，而是先产出：
 
-- 首页
-- 目录页
-- 正文页
+- 每个方向一张 `正文页` 预览图
 
-这三类预览，让用户看过再决定。
+并把图片写进本地 `previews/` 文件夹，把文件夹路径给用户，让用户看过再决定。
+
+用的是正文页而不是封面或目录页，因为只有正文页能同时验证"视觉风格"和"内容承载力"；封面偏氛围、目录页偏结构。同一轮所有方向都使用同一种页面类型，保证可比性。
 
 ### 5. Review 不是可选项
 
@@ -174,11 +174,12 @@
 
 ### Stage 2 — 风格提案与预览
 
-生成多套风格方向，并给出真实预览图，覆盖：
+生成多套风格方向，并给出真实预览图：
 
-- 首页
-- 目录页
-- 正文页
+- 每个方向恰好一张 `正文页` 预览图
+- 图片写入 `previews/` 文件夹，文件名与方向编号对应（如 `A_正文页.png`）
+- 直接给出文件夹绝对路径，用户在文件夹里浏览对比
+- 不生成预览 HTML，不自动开浏览器
 
 ### Stage 2.5 — 风格 refinement
 
@@ -209,31 +210,27 @@
 - 每页先出 1 张最终图
 - 还是每页先出多张候选再选
 
-如果选多候选，就先进入 candidate picker，再进入最终 review。
+单候选直接生成到 `slides/` 进评审；多候选生成到 `slides_candidates/`，用户在文件夹里选，在对话里以 `S01-03` 这样的编号回复。不生成选图 HTML。
 
 ### Stage 5 — Review and retouch
 
-默认用 review shell 做评审。
+评审直接用文件夹：页面图都在 `slides/`，用户打开文件夹逐张看。
 
-如果用户满意，就结束评审；不满意，就复制结构化反馈回对话继续返修。
+如果用户满意，就结束评审；不满意，就在对话里按页提意见（如 `S03 右上角太空`、`S05 整页重做`），agent 按页返修并告知更新了哪些文件。不使用评审 HTML，也不需要复制 JSON。
 
 ---
 
-## 内置工作流壳子
+## 文件夹约定（替代原工作流壳子）
 
-这个 skill 自带 3 个固定工作流界面壳子：
+本分支已移除 HTML 工作流壳子，改为纯文件夹 + 对话：
 
-- `assets/preview_shell/index.html`
-- `assets/candidate_picker_shell/index.html`
-- `assets/review_shell/index.html`
+| 阶段 | 目录 | 说明 |
+|---|---|---|
+| 风格预览 | `previews/` | `A_正文页.png`、`B_正文页.png`；refinement 用轮次前缀 `R2_A_正文页.png` |
+| 最终页（单候选） | `slides/` | `S01.png`、`S02.png` |
+| 最终页（多候选） | `slides_candidates/` | `S01-01.png`、`S01-02.png`，用户在对话里回复选中的编号 |
 
-它们分别承担：
-
-- 风格预览比较
-- 多候选选图
-- 评审与返修
-
-这些 shell 是工作流的一部分，不建议随意换成别的自制页面。
+原 `assets/preview_shell/`、`assets/candidate_picker_shell/`、`assets/review_shell/` 与 `scripts/render_review_markup.py` 保留在仓库中仅作参考，工作流不再使用。
 
 ---
 
@@ -300,7 +297,7 @@ ppt-image-first/
 │  ├─ design_spec_reference.md
 │  ├─ slide_blueprint_reference.md
 │  └─ spec_lock_reference.md
-└─ assets/
+└─ assets/                 (legacy, unused by the workflow)
    ├─ preview_shell/
    ├─ candidate_picker_shell/
    └─ review_shell/

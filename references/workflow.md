@@ -47,7 +47,7 @@ Use this stage to decide whether the work is:
 
 Goal:
 - create an upstream content basis before style work
-- make later `首页 / 目录页 / 正文页` previews content-bearing rather than generic
+- make later previews content-bearing rather than generic
 - give `design_spec.md`, `slide_blueprint.md`, and `spec_lock.md` a grounded content source
 - avoid empty topic shells, placeholder logic, and shallow page planning
 
@@ -103,19 +103,20 @@ Rules for this step:
 
 ---
 
-## Stage 2 — Style proposal
+## Stage 2 — Style proposal and preview
 
 Once the request direction is confirmed:
 - derive style vectors internally
 - use the existing content basis as the source for preview content; if `content_report.md` exists, do not replace it with a fresh generic topic outline
 - propose the user-requested number of style directions as lightweight proposal cards
 - if the user gave no clear count, propose `3` directions by default
-- generate previews for each direction
-- place the proposal cards and preview images into the bundled `assets/preview_shell/index.html` shell
-- do not create a replacement preview shell, a lookalike HTML page, or a fresh preview UI from scratch
-- immediately attempt to open the local preview HTML for the user
-- only fall back to giving the file path if the open action fails, and explain the blocker
-- show the proposals together with their previews before asking for final selection
+- generate exactly one preview image per direction
+- use `正文页` (body page) as the preview page role by default; a body page is the only page role that can show visual style and content carrying capacity at the same time
+- keep the same page role across all directions in the same round so the user can compare them fairly
+- write the preview images into a local folder such as `<project>/previews/`, with filenames that map cleanly to direction codes, for example `A_正文页.png`, `B_正文页.png`, `C_正文页.png`
+- do not assemble an HTML preview page, do not open a browser, and do not create a replacement preview UI
+- after the images are written, give the user the absolute folder path so they can open the folder and look at the images directly
+- show the proposal cards together with the filename mapping before asking for final selection
 
 Each proposal must include:
 - proposal name
@@ -125,14 +126,12 @@ Each proposal must include:
 - suitable scenarios
 - risk note
 
-Each proposal must also include exactly 3 previews:
-- 首页 — checks first-impression and visual tone
-- 目录页 — checks structural capability
-- 正文页 — checks information-carrying capability
-
-Those previews must be content-bearing enough to evaluate.
+The preview image must be content-bearing enough to evaluate.
 Do not treat empty shells, placeholder copy, or mostly blank UI scaffolds as acceptable preview outputs.
-If `content_report.md` or another content basis summary exists, the preview set should draw from it directly: cover positioning from the thesis, TOC structure from the narrative chain, and body-page content from the section/page candidates rather than from generic placeholder topic logic.
+If `content_report.md` or another content basis summary exists, the preview should draw from it directly: body-page content should come from the section/page candidates rather than generic placeholder topic logic.
+
+Because only the body page is previewed, the cover direction in the proposal card is a design intent, not verified evidence.
+Do not describe it as if the user has already seen the cover.
 
 ## Stage 2.5 — Style refinement
 
@@ -141,12 +140,15 @@ If the user is not ready to confirm a final direction yet, enter a style refinem
 In each refinement round:
 - let the user choose one current direction as the base direction
 - before deriving more options from that base, run one short refinement-time style inversion pass on that base direction
-- in that pass, read the chosen `首页 / 目录页 / 正文页` together with the original prompt and summarize what this direction actually became in the generated images
+- in that pass, read the chosen preview image together with the original prompt and summarize what this direction actually became in the generated image
 - surface which parts appear stable and suitable to inherit into the next round, and which parts may be one-off effects
 - let the user say what they want adjusted on top of that now-clarified base
 - derive another user-requested number of candidate directions from that base
 - if the user gives no clear count for the refinement round, default to `3` derived directions
-- regenerate the same `首页 / 目录页 / 正文页` preview set for each derived direction
+- generate exactly one new `正文页` preview image per derived direction
+- write the round's images into the same `previews/` folder with a round prefix, for example `R2_A_正文页.png`
+- give the user the absolute folder path again after each round
+- do not assemble HTML or open a browser during refinement
 
 During refinement, proactively give a few lightweight tweak prompts to help the user think, such as:
 - `对比度高一点`
@@ -177,11 +179,12 @@ Stop and let the user choose, mix, or revise the style direction.
 After `风格确认` and before writing any planning files, run one short `风格反演确认` stage.
 
 In this stage:
-- read the chosen `首页 / 目录页 / 正文页` as visual evidence rather than treating the original prompt text as the whole truth
-- compare the actual images with the original generation prompt and identify what the model really produced
-- extract stable repeated style facts such as brightness range, palette role usage, material feel, lighting/depth behavior, container grammar, edge treatment, decoration grammar, information density, text-image balance, and overall restraint level
+- read the chosen preview image as visual evidence rather than treating the original prompt text as the whole truth
+- compare the actual image with the original generation prompt and identify what the model really produced
+- extract stable style facts such as brightness range, palette role usage, material feel, lighting/depth behavior, container grammar, edge treatment, decoration grammar, information density, text-image balance, and overall restraint level
 - also extract theme-specific or scene-specific liked elements that may matter to the user, such as school emblems, campus buildings, company marks, laboratory context, domain imagery, clouds, devices, chart language, or other subject anchors
-- distinguish between what appears consistently across the preview set and what only works as a one-off local flourish
+- distinguish between what this image reliably shows and what only works as a one-off local flourish
+- because only one body page was previewed, explicitly mark style aspects that were never previewed — cover atmosphere, TOC structure, multi-page rhythm — as unverified intent rather than locking them as evidence-based facts
 
 When reporting the inversion result to the user:
 - do not ask an open-ended style interview
@@ -194,9 +197,11 @@ When reporting the inversion result to the user:
 
 Rules:
 - trust the confirmed preview evidence more than the raw prompt wording when they differ
-- only lock features that are either visually stable across the selected previews or explicitly confirmed by the user
+- only lock features that are clearly visible in the selected preview or explicitly confirmed by the user
 - do not mistake rendering accidents, one-off decorations, typo-like artifacts, or isolated composition tricks for deck-level style facts
+- do not upgrade cover-only or TOC-only ideas into locked deck-wide facts when those page roles were not previewed
 - use the confirmed inversion result to make the later planning files more concrete than the original prompt alone could support
+- record the single-preview coverage limit in the planning files
 
 ## Stage 3 — Planning files
 
@@ -213,6 +218,7 @@ The summary should cover:
 - project overview
 - chosen style result
 - deck-level continuity anchor
+- preview coverage limit (only the body page was previewed)
 - page structure summary
 - execution readiness
 
@@ -231,7 +237,7 @@ Before the first full generation pass, ask one short branch question:
 Rules for this branch:
 - keep it short and operational
 - if the user wants the multi-candidate path, also ask how many candidates per slide they want
-- if the user chooses the single-candidate path, skip the candidate-picker stage entirely
+- if the user chooses the single-candidate path, skip the candidate-selection stage entirely
 - if the user gives no clear preference, default to one final image per slide and go directly into review
 
 Generation in this skill should stay image-first.
@@ -252,27 +258,12 @@ That means:
 - do not add self-authored editable copy just because the generated page looks sparse or because editable text feels safer
 - do not add explanatory boxes, correction notes, patch text, or rescue text to compensate for weak generation output; fix the generation path instead
 - when editable overlays are necessary, they should come from the approved slide content and should be used to realize the confirmed page, not to redesign it after the fact
-- PIL/Pillow may be used only for mechanical review markup rendering, format conversion, dimension checks, or packaging support; it must not create, replace, correct, or overlay audience-facing slide content in preview images, selected final images, reviewed pages, or final PPT visuals
+- PIL/Pillow may be used only for mechanical format conversion, dimension checks, or packaging support; it must not create, replace, correct, or overlay audience-facing slide content in preview images, selected final images, reviewed pages, or final PPT visuals
 - if image generation quality, text rendering limits, or tooling constraints force a tradeoff, tell the user explicitly before changing generation strategy
 
 The final generation should remain faithful to the confirmed preview logic rather than drifting into a different production method.
 Unless the user explicitly requests another presentation ratio, generate preview images and final page visuals in `16:9`.
 Do not let the image-generation path default to a generic art ratio such as `3:2`.
-
-If the user chose single-candidate generation:
-- generate one final image per slide
-- skip the candidate-picker stage
-- move directly into the review HTML stage
-
-If the user chose multi-candidate generation:
-- generate the requested number of final candidates for each slide using the same approved page prompt for that slide
-- keep the variation inside one approved page direction rather than treating the candidates as new style proposals
-- assemble the bundled `assets/candidate_picker_shell/index.html`
-- immediately attempt to open that local candidate-picker HTML for the user
-- tell the user to finish the selection in the page and click `复制全部编号`
-- tell the user concretely to return to the chat input, paste the copied codes, and send them
-- wait for the returned selection codes before entering the review HTML stage
-- once the codes arrive, map them to the selected page images and use that chosen set as the review input
 
 Before writing per-slide generation prompts, extract the confirmed direction into one explicit deck-level continuity anchor.
 Every slide prompt must inherit that anchor first, then add only page-role and content-specific variation.
@@ -286,6 +277,21 @@ Prompt assembly metadata isolation:
 - the prompt body should contain only the approved audience-facing slide content, page role, visual direction, continuity anchor, layout intent, and any visible labels that should actually appear in the slide
 - after generation, reconnect outputs to slide IDs through filenames or the external mapping table, not through text embedded in the image prompt
 
+If the user chose single-candidate generation:
+- generate one final image per slide into `<project>/slides/`, using filenames such as `S01.png`, `S02.png`
+- skip the candidate-selection stage entirely
+- move directly into the folder review stage
+
+If the user chose multi-candidate generation:
+- generate the requested number of final candidates for each slide using the same approved page prompt for that slide
+- keep the variation inside one approved page direction rather than treating the candidates as new style proposals
+- write the candidates into `<project>/slides_candidates/` with filenames such as `S01-01.png`, `S01-02.png`
+- do not assemble a candidate-picker HTML page, do not open a browser, and do not create any replacement selection UI
+- give the user the absolute candidate folder path
+- tell the user to reply in chat with one line per slide, in the form `S01-03`, using the candidate number in the filename
+- wait for the returned selection codes before entering the review stage
+- once the codes arrive, map them to the selected page images by filename and copy or reference that chosen set as the review input
+
 ### Confirmation point 4 — 初稿评审与返修
 Do not jump directly from first-pass page generation to final delivery.
 After the first full set of page visuals exists, enter a dedicated review-and-retouch loop.
@@ -295,35 +301,16 @@ After the first full set of page visuals exists, enter a dedicated review-and-re
 ## Stage 5 — Review and retouch
 
 After the first full set of page visuals is ready:
-- assemble the review page from the bundled `assets/review_shell/index.html` shell
-- do not create a replacement review shell, a lookalike HTML page, or a fresh review UI from scratch
-- immediately attempt to open that local review HTML for the user
-- treat that HTML as the main review surface instead of using the live PPT as the collaboration surface by default
-- only fall back to a file path when the open action fails, and explain the blocker
+- make sure every generated page is written into `<project>/slides/`
+- give the user the absolute folder path and tell them to review the images directly in the folder
+- do not assemble a review HTML page, do not open a browser, and do not create any replacement review UI
+- treat the image folder as the main review surface instead of using the live PPT as the collaboration surface by default
 
 When you present the review stage to the user, explicitly tell them:
 - if the current result is satisfactory, they can say it is approved and the review stage can end
-- if the current result is not satisfactory, they should use the review page's `复制当前页结果` or `复制全部页面结果` button
-- after clicking copy, they should return to the chat input box, paste the copied JSON into the input field, and send it
-- do not merely say `paste the JSON`; tell them concretely how to do it in one short sentence
-
-In the review HTML:
-- show every generated slide image
-- keep page order visible
-- support per-page review comments
-- when the environment supports it, prefer visual annotations such as brush marks, boxes, arrows, or highlighted regions in addition to text comments
-- preserve enough context that the agent can understand both the page and the marked region together
-- copy lightweight `review-shell-v2` JSON with normalized coordinate markup for notes, rectangles, and pen strokes
-- do not include base64 images, data URLs, or full annotated preview images in the copied review JSON
-
-When the user pastes `review-shell-v2` feedback:
-- save the pasted JSON to a local file such as `review_feedback.json`
-- run `python scripts/render_review_markup.py review_feedback.json --images <generated-page-image-directory> --out <marked-review-directory>`
-- use the rendered marked images plus separate page comments and note comments as the reference for retouching or regenerating pages
-- for review revisions, use the selected generated image plus user feedback as input to the image edit/regeneration model; do not patch the selected image directly with deterministic drawing code
-- do not bake textual comments into the marked image by default; pass text feedback separately alongside the marked image when calling the image edit/regeneration model
-- do not skip the local marked-image restoration step and rely only on raw coordinate text when visual markup is present
-- if source images cannot be found automatically, create an image-map JSON from page IDs to local image paths and rerun the same script with `--image-map`
+- if the current result is not satisfactory, they should describe the problem directly in chat, per slide, by slide ID or filename, for example `S03 右上角太空` or `S05 整页重做`
+- no JSON payload, annotation file, or browser page is needed
+- if they prefer, they can mark the images themselves and point to the marked files, but this is optional
 
 When the user gives review feedback, classify it before acting:
 - `full-page regeneration` → use when the user wants broader changes to composition, hierarchy, page concept, style intensity, or overall mood
@@ -336,7 +323,7 @@ Execution rules:
 - do not solve review feedback by adding unapproved PPT overlays
 - do not treat the PPT file itself as the fast-turnaround retouch surface unless the user explicitly asks for that workflow
 - if the requested revision would change approved content rather than only visuals, surface that explicitly before editing
-- after each retouch round, update the review HTML, open it again, and repeat the same instruction about approving or copying JSON back into the chat input
+- after each retouch round, list which image files were updated (with filenames), give the folder path again, and repeat the same approval-or-feedback instruction
 - repeat the review-and-retouch round until the user confirms that the pages are ready for final delivery
 - do not export the final PPT before that approval
 - once the user approves the reviewed pages, export the final PPT and immediately attempt to open it for them
@@ -347,3 +334,5 @@ Execution rules:
 - Do not turn the interaction into a parameter form.
 - Do not ask for repeated approval inside a stage.
 - Keep the first confirmation quick, the second heavy, the third short, and the final review stage iterative.
+- The preview stage produces exactly one `正文页` image per direction; do not add cover or TOC previews unless the user explicitly asks for them.
+- Preview and review are folder-based; never fall back to assembling or opening an HTML shell.

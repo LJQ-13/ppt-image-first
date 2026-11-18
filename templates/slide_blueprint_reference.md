@@ -32,17 +32,18 @@ For each slide, include:
 - text_visual_balance: balanced
 - visual_strategy: structured grouping with clear hierarchy
 - continuity_inheritance: keep bright scientific-board background tendency, inherit light panel container grammar, use deep-blue for structure and cyan-blue only for key data emphasis, do not shift into dark HUD mood
-- preview_evidence_binding: inherit the user-confirmed cloud-and-atmosphere semantic field, keep academic answer-defense tone, keep school-context anchor visible in a way suitable for this page role, do not force the cover-only skyline composition onto an inner logic page
+- preview_evidence_binding: inherit the preview-verified body-page facts (panel grammar, palette roles, density, emphasis tone) and the user-confirmed cloud-and-atmosphere semantic field; treat cover-only skyline composition as unverified intent rather than evidence, and do not force it onto an inner logic page
 ```
 
 ## Rules
 
 - This file bridges content and style.
 - It must be written only after the style direction is confirmed.
+- The preview evidence source is a single `正文页` image; do not cite cover or TOC previews that were never generated.
 - For each slide, `content_basis_binding` should state which part of `content_report.md` or equivalent content basis this page inherits, compresses, or interprets.
 - For each slide, `claim_status` should state whether the core assertion is `user_provided`, `inferred`, `needs_confirmation`, or a mix of these.
 - For each slide, `continuity_inheritance` should state how this page stays inside the confirmed deck-level continuity anchor, especially for brightness/background tendency, palette role usage, container grammar, and emphasis tone.
-- For each slide, `preview_evidence_binding` should state which reverse-engineered preview facts or user-confirmed liked elements this page should inherit, reinterpret locally, or intentionally not carry over.
+- For each slide, `preview_evidence_binding` should state which reverse-engineered facts from the single `正文页` preview or which user-confirmed liked elements this page should inherit, reinterpret locally, or intentionally not carry over. Distinguish body-page facts (preview-verified) from cover/TOC/rhythm intents (not preview-verified).
 - Do not write empty phrases such as `keep the style consistent`. State the inherited constraints concretely.
 - Any editable overlay that may appear in final assembly must be traceable to explicit fields in this slide entry rather than invented during generation.
 - If no such overlay need is explicitly described here, the default assembly behavior is zero post-generation overlays.

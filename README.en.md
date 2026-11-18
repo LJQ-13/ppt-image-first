@@ -8,6 +8,8 @@ Conversation-first, image-first PPT workflow for building presentation plans, st
 
 > **Output note: this is an image-first workflow.** By default, the workflow uses **GPT Image 2** to generate full-slide page visuals, then places those page images into a PPTX container for delivery. It is not a fully editable PowerPoint generator that recreates every text box, shape, chart, and decoration as native PowerPoint objects. The result is closer to a high-fidelity visual deck: suitable for presenting, sharing, and image-level retouching, but slide text and design elements are usually not individually editable as native PPT elements.
 
+> **Branch note.** The sample images and demo deck in this repository come from the original three-page-preview + HTML-shell version and serve as visual reference only. The active workflow is the folder-based one described in this README and `SKILL.md`.
+
 ## Quick examples
 
 ### 1. Workflow overview slide
@@ -111,15 +113,13 @@ That stage produces `content_report.md`, which gives later preview pages and pla
 
 ### 4. Preview before lock-in
 
-The skill does not ask the user to choose a final style from text alone. It first generates preview sets for:
+The skill does not ask the user to choose a final style from text alone. It first generates, for each direction, exactly one `正文页` (body page) preview image, writes them into a local `previews/` folder, and gives the user the folder path.
 
-- 首页
-- 目录页
-- 正文页
+The body page is used because it is the only page role that shows both visual style and content carrying capacity; the cover shows atmosphere and the TOC shows structure. All directions in one round share the same page role so the comparison stays fair.
 
 ### 5. Review is part of the workflow
 
-The first generated deck is not treated as final delivery. The skill includes a dedicated review-and-retouch round using a review HTML shell.
+The first generated deck is not treated as final delivery. The skill includes a dedicated review-and-retouch round: the user reviews the generated images directly in the `slides/` folder and gives feedback in chat, page by page.
 
 ---
 
@@ -158,11 +158,14 @@ Ask only 3 short questions:
 
 ### Stage 2 — Style proposal and preview
 
-Generate multiple style directions and real preview images for:
+Generate multiple style directions, each with exactly one real preview image:
 
-- cover
-- TOC
-- body page
+- one `正文页` (body page) image per direction
+- images are written into a local `previews/` folder, e.g. `A_正文页.png`
+- the absolute folder path is given to the user, who browses the images directly
+- no preview HTML, no browser launch
+
+The body page is used because it is the only page role that shows both visual style and content carrying capacity; the cover shows atmosphere and the TOC shows structure. All directions in one round share the same page role so the comparison stays fair.
 
 ### Stage 2.5 — Style refinement
 
@@ -170,11 +173,13 @@ If the user likes a direction but wants changes, continue from that direction in
 
 ### Stage 2.75 — Style inversion confirmation
 
-Read the chosen preview images as evidence of what the user actually liked, and extract:
+Read the chosen preview image as evidence of what the user actually liked, and extract:
 
 - what should clearly continue
 - what looked good but needs confirmation
 - what was probably one-off and should not be hard-locked
+
+Only the body page was previewed, so cover atmosphere, TOC structure, and cross-page rhythm are recorded as intent rather than preview-verified facts.
 
 ### Stage 3 — Planning files
 
@@ -193,29 +198,27 @@ Ask whether the user wants:
 - one final image per slide
 - or multiple candidates per slide
 
-If the user chooses multiple candidates, the candidate-picker shell is used before the final review stage.
+Single-candidate output goes into `slides/` and moves straight into review. Multi-candidate output goes into `slides_candidates/`; the user picks in the folder and replies in chat with codes such as `S01-03`. No candidate-picker HTML.
 
 ### Stage 5 — Review and retouch
 
-Use the review shell as the default review surface.
+Review happens directly in the folder: all page images are in `slides/`, and the user opens the folder and inspects them.
 
-If the user is satisfied, finish the review. If not, they can copy structured feedback back into the chat and continue the retouch loop.
+If the user is satisfied, the review ends. If not, they describe the problem per page in chat (e.g. `S03 top-right is too empty`, `S05 redo the whole page`), and the agent retouches and reports which files changed. No review HTML, no JSON payload.
 
 ---
 
-## Bundled workflow assets
+## Folder conventions (replacing the former workflow shells)
 
-This skill ships with fixed workflow shells that are meant to be reused, not replaced casually:
+This branch removed the HTML workflow shells in favor of folders plus chat:
 
-- `assets/preview_shell/index.html`
-- `assets/candidate_picker_shell/index.html`
-- `assets/review_shell/index.html`
+| Stage | Folder | Naming |
+|---|---|---|
+| Style preview | `previews/` | `A_正文页.png`, `B_正文页.png`; refinement rounds use a prefix such as `R2_A_正文页.png` |
+| Final pages (single) | `slides/` | `S01.png`, `S02.png` |
+| Final pages (multi) | `slides_candidates/` | `S01-01.png`, `S01-02.png`; the user replies with the chosen code in chat |
 
-These shells support:
-
-- preview comparison
-- candidate selection
-- review and retouch collaboration
+The former `assets/preview_shell/`, `assets/candidate_picker_shell/`, `assets/review_shell/` and `scripts/render_review_markup.py` are kept in the repository for reference only and are no longer used by the workflow.
 
 ---
 
@@ -283,9 +286,9 @@ ppt-image-first/
 │  ├─ slide_blueprint_reference.md
 │  └─ spec_lock_reference.md
 └─ assets/
-   ├─ preview_shell/
-   ├─ candidate_picker_shell/
-   └─ review_shell/
+   ├─ preview_shell/          (legacy, unused)
+   ├─ candidate_picker_shell/ (legacy, unused)
+   └─ review_shell/           (legacy, unused)
 ```
 
 ---

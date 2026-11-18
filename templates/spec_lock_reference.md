@@ -15,6 +15,7 @@ This file records only the constraints that generation must not drift away from.
 
 ### visual_system
 - chosen style direction
+- preview evidence scope: only one `正文页` preview was generated, so cover/TOC/rhythm claims are intent rather than locked evidence
 - reverse-engineered preview facts that are now hard constraints
 - user-confirmed deck-wide liked elements
 - deck-level continuity anchor

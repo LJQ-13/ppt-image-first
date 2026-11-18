@@ -24,10 +24,11 @@ Use this file for the global deck rationale.
 ### III. Style Direction
 - chosen style proposal
 - one-line positioning
-- cover direction
+- cover direction (design intent, not preview-verified)
 - body-page visual grammar
 - why this direction fits the deck
 - reverse-engineered preview facts
+- preview coverage limit: only one `正文页` image was generated; cover atmosphere, TOC structure, and cross-page rhythm were not previewed
 - user-confirmed liked elements to preserve
 - elements that should stay local or should not be hard-locked deck-wide
 - deck-level continuity anchor
@@ -47,12 +48,13 @@ Use this file for the global deck rationale.
 - which claims need restrained wording because they are not fully confirmed
 
 ### VI. Preview-to-Deck Continuity
-- how the confirmed style previews should extend into the full deck
-- which reverse-engineered facts came from the actual previews rather than only from the prompt
+- how the confirmed style preview should extend into the full deck
+- which reverse-engineered facts came from the actual preview image rather than only from the prompt
 - what must remain consistent
 - which liked elements become deck-wide anchors
 - which liked elements stay local to specific page roles only
 - where page variation is encouraged
+- which continuity claims are intent-only because the related page roles were never previewed
 
 ### VII. Constraints
 - hard requirements
@@ -93,5 +95,6 @@ Example:
 - This file explains the deck at the global level.
 - Do not turn it into a page-by-page blueprint.
 - Do not put machine-execution parameters here unless they are needed for human reasoning.
-- If the confirmed previews reveal stronger or more specific style facts than the original prompt wording, write the stronger reverse-engineered version here.
-- If a feature was liked only in one preview page and was not confirmed as deck-wide, mark that scope explicitly instead of silently upgrading it into a global rule.
+- If the confirmed preview reveals stronger or more specific style facts than the original prompt wording, write the stronger reverse-engineered version here.
+- If a feature was liked only in the single previewed body page and was not confirmed as deck-wide, mark that scope explicitly instead of silently upgrading it into a global rule.
+- Do not present cover or TOC style claims as preview-verified; only the body page was generated.

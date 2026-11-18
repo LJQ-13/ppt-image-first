@@ -103,6 +103,15 @@ When you enter style confirmation:
 - then show **real generated previews** if image generation is available
 - only after previews are shown should you ask for a final pick or a mixed revision
 
+Preview delivery is folder-based:
+- each direction gets exactly one `正文页` preview image
+- write the images into a local `previews/` folder
+- give the user the absolute folder path and the filename-to-direction mapping
+- do not assemble an HTML preview page and do not open a browser
+
+Do not describe the cover or TOC as if they were previewed.
+Only the body page has been previewed; the cover direction stays a stated intent.
+
 If previews are not available yet, say that explicitly instead of implying text-only selection is the intended workflow.
 Do not treat text sketches as equivalent to visual previews.
 
@@ -113,10 +122,11 @@ Run a refinement round instead.
 
 In a refinement round:
 - treat one current direction as the base direction
-- before deriving more variations, do one short refinement-time `风格反演确认` on that base so the next round is built from what the images actually expressed rather than only from the earlier prompt wording
+- before deriving more variations, do one short refinement-time `风格反演确认` on that base so the next round is built from what the image actually expressed rather than only from the earlier prompt wording
 - derive another user-requested number of candidate variations from that base
 - if the user gives no clear count, default to `3` refined directions
 - keep the proposals inside the same broad identity unless the user clearly asks for a bigger pivot
+- regenerate exactly one `正文页` preview per derived direction into the same `previews/` folder with a round prefix, then give the folder path again
 
 During refinement, proactively give a few user-friendly tweak cues so the user can react more easily.
 Examples:
@@ -141,9 +151,10 @@ Do not end the message as if the only available response is `choose one and I wi
 After `风格确认` and before writing the 3 planning files, run one short `风格反演确认` step.
 
 In that step:
-- read the chosen `首页 / 目录页 / 正文页` as evidence of what the user actually liked
+- read the chosen preview image as evidence of what the user actually liked
 - combine that reading with the original generation prompt, but do not blindly trust the prompt over the image result
-- first output a short structured judgment instead of asking the user to analyze the images from scratch
+- remember that only a body page was previewed, so cover atmosphere, TOC structure, and multi-page rhythm are not evidence-backed yet
+- first output a short structured judgment instead of asking the user to analyze the image from scratch
 
 Use 3 client-facing buckets:
 - `明确应延续的`
@@ -168,18 +179,18 @@ When asking the user for confirmation:
 - if they do not correct you, default to keeping the first bucket only
 - do not automatically make the second bucket deck-wide hard constraints without confirmation
 
-## Response pattern before final review when multi-candidate generation is enabled
+## Response pattern before review when multi-candidate generation is enabled
 
-If the user wants multiple final candidates per slide, do not jump straight from generation into the review HTML.
+If the user wants multiple final candidates per slide, do not jump straight from generation into review.
 First move the user through one short candidate-selection round.
 
 In that round:
 - explain briefly that each page now has multiple final candidates generated from the same approved page prompt
-- open the bundled candidate-picker HTML
-- tell the user to finish the selection in the page and click `复制全部编号`
-- tell them concretely to return to the chat input box, paste the copied codes into the input field, and send them
-- do not ask them to describe the selection manually if the copy-code path is available
-- once the codes arrive, acknowledge the chosen set and then enter the normal review HTML stage
+- give the user the absolute candidate folder path, for example `<project>/slides_candidates/`
+- tell the user to look at the images directly in the folder
+- tell them to reply in chat with one line per slide, in the form `S01-03`, using the candidate number in the filename
+- do not build a candidate-picker HTML page and do not ask the user to open a browser
+- once the codes arrive, acknowledge the chosen set and then enter the normal review stage
 
 If the user chose only one final image per slide, skip this round entirely.
 
@@ -189,13 +200,14 @@ After the first full deck is generated, do not immediately treat the PPT as fini
 Move the user into a visual review round.
 
 In that round:
-- use a dedicated review HTML as the default collaboration surface
-- keep its visual style aligned with the preview shell rather than switching to a completely different interface style
-- invite the user to react page by page
-- prefer natural feedback, annotations, and marked regions over asking the user to describe everything in abstract terms
-- explicitly tell the user what the next two paths are: `满意就直接告诉我可以结束评审；不满意就点页面里的复制按钮，把复制出的 JSON 粘贴到对话输入框里再发送`
-- do not rely on vague phrasing like `paste the review data`; tell the user concretely to return to the chat box, paste into the input field, and send
-- when pasted review feedback contains coordinate markup, first restore local marked review images with `scripts/render_review_markup.py`; use those marked images plus separate text comments as the retouch reference
+- write every generated page into `<project>/slides/` and give the user the absolute folder path
+- tell the user to review the images directly in the folder
+- invite the user to react page by page in chat
+- prefer natural feedback keyed by slide ID or filename, for example `S03 右上角太空`, `S05 整页重做`
+- explicitly tell the user what the next two paths are: `满意就直接告诉我可以结束评审；不满意就在对话里按页说明问题，我按页返修`
+- do not require a JSON payload, annotation file, or browser-based review surface
+- if the user marks the images themselves and points to the marked files, accept that as optional input alongside their text comments
+- do not build a review HTML page and do not open a browser
 
 When the user gives feedback, classify it internally before responding:
 - overall page dissatisfaction → regenerate the whole page
@@ -203,8 +215,8 @@ When the user gives feedback, classify it internally before responding:
 - content-level change → surface that it changes the approved content plan
 
 Do not respond to review feedback by inventing new PPT overlay layers by default.
-The default fix path is to update the page visual itself and then refresh the review HTML.
-After each refreshed review round, repeat the same approval-or-paste instruction until the user is satisfied.
+The default fix path is to update the page visual itself.
+After each refreshed round, list the updated filenames, give the folder path again, and repeat the same approval-or-feedback instruction until the user is satisfied.
 Once the user explicitly approves the reviewed pages, export the final PPT and open it for them.
 
 ## Revision pattern

@@ -11,9 +11,10 @@ Use this skill to turn a vague PPT request into a generation-ready, image-first 
 
 - Input: a PPT topic, rough goal, existing notes/materials, or complete report-like narrative.
 - Optional anchors: audience, page count or duration, school/company/lab/course/brand identity, use occasion, source files, and style constraints.
-- Output: a confirmed content basis, visual style previews, deck specs, generated page visuals, review surface, and final PPT after approval.
+- Output: a confirmed content basis, visual style previews as local image files, deck specs, generated page visuals, folder-based review, and the final PPT after approval.
 - Confirmation gates: `需求确认`, `风格确认`, `生成前确认`, and final review approval.
 - Default ratio: generate preview images and final page visuals in `16:9` unless the user explicitly requests another ratio.
+- Preview, candidate-selection, and review surfaces are local image folders plus chat feedback. Do not build or open HTML UI pages for those stages.
 
 ## Workflow Phases
 
@@ -21,9 +22,9 @@ Follow these phases in order and do not skip the confirmation gates:
 
 1. Intake: clarify lightly, identify anchors, output a short baseline judgment, then get `需求确认`.
 2. Content basis: create or extract `content_report.md` unless the user already supplied complete report-like content; show a synthesized judgment, not the raw file by default.
-3. Style preview: align style boundaries, propose directions, generate `首页 / 目录页 / 正文页` previews for each direction, support refinement, then get `风格确认`.
+3. Style preview: align style boundaries, propose directions, generate one `正文页` preview image per direction into a local `previews/` folder, give the user the folder path, support refinement, then get `风格确认`.
 4. Planning lock: run `风格反演确认`, then write `design_spec.md`, `slide_blueprint.md`, and `spec_lock.md` in that order; summarize and get `生成前确认`.
-5. Generation review: generate page visuals, optionally run candidate selection, open the review HTML, retouch as needed, and export the final PPT only after approval.
+5. Generation and review: generate page visuals into a local folder, let the user review the images directly in the folder and give feedback in chat, retouch as needed, and export the final PPT only after approval.
 
 Read `references/workflow.md` for stage-by-stage execution details.
 
@@ -31,7 +32,7 @@ Read `references/workflow.md` for stage-by-stage execution details.
 
 - Intake and baseline: read `references/conversation_framework.md` only when you need the conversation-first intake pattern.
 - Style proposals: read `references/style-system.md` when producing proposal cards or interpreting V1-V8 internally.
-- Preview/review UI: read `references/preview-flow.md` before producing style previews, candidate-picker pages, or review pages.
+- Preview flow: read `references/preview-flow.md` before producing style previews or reviewing generated page images.
 - Content basis: read `templates/content_report_reference.md` before writing `content_report.md`.
 - Planning files: read `templates/design_spec_reference.md`, `templates/slide_blueprint_reference.md`, and `templates/spec_lock_reference.md` immediately before writing those files.
 
@@ -41,23 +42,24 @@ Read `references/workflow.md` for stage-by-stage execution details.
 - Do not force the user to configure design parameters manually; translate their natural-language intent into design decisions.
 - Ask for real-world identity anchors when relevant, but treat them as grounding context rather than style questions.
 - Keep intake lightweight; do not turn content basis or style alignment into a long questionnaire.
-- Use style vectors internally, but present front-stage options as concise proposal cards plus image previews.
+- Use style vectors internally, but present front-stage options as concise proposal cards plus preview images.
 - Use the content basis for previews and planning rather than generic placeholder structures.
 - Mark inferred claims carefully; do not present unsupported precise data, experiment results, citations, or institutional conclusions as user-provided facts.
 - Show summaries, proposal cards, previews, and review surfaces by default; show raw planning files only when useful or requested.
 
 ## Hard Rules
 
-- Preview-first: final style confirmation should be based on generated `首页 / 目录页 / 正文页` previews, not text-only choices.
-- Shells are mandatory: use `assets/preview_shell/index.html`, `assets/candidate_picker_shell/index.html`, and `assets/review_shell/index.html` as the base UIs for their stages.
-- Open the local preview, candidate-picker, review, and final PPT files immediately when those stages produce them; if opening fails, state the blocker and provide the path.
+- Preview-first: final style confirmation should be based on generated preview images, not text-only choices.
+- One preview image per direction: each style direction gets exactly one `正文页` preview image. All directions in the same round must use the same page role so the user can compare them fairly.
+- Folder delivery: write preview and generated page images to a local folder and give the user the absolute folder path immediately. Do not assemble HTML preview, candidate-picker, or review pages, and do not open a browser for those stages.
+- Folder review: the user reviews generated pages directly in the image folder and gives feedback in chat, keyed by slide ID or filename. Do not require a special JSON payload, annotation file, or browser-based review surface.
 - Do not write `slide_blueprint.md` before style direction and `风格反演确认` are complete.
 - Keep generation image-first when the confirmed direction depends on generated page visuals; do not silently fall back to shape-by-shape PPT construction or hand-drawn code substitutes.
 - User-requested edits such as adding, replacing, correcting, or supplementing visible text are still image-generation/editing tasks by default. Do not use PIL, Pillow, canvas, SVG, HTML screenshots, PPT native text boxes, or deterministic overlays to patch final page visuals unless the user explicitly asks for a code/PPT-overlay workaround.
 - Treat generated page visuals as complete by default; post-generation overlays default to zero unless they are traceable to approved blueprint fields.
-- Keep slide identifiers, candidate codes, filenames, and generation batch labels outside the image-generation prompt body. They may appear in planning files, filenames, mapping tables, review UI, and chat instructions, but the prompt sent to the image model should contain only audience-facing content and visual direction.
-- Review payloads should carry lightweight coordinate markup, not base64 preview images. When a user pastes review JSON with markup, first render the marked review images locally with `scripts/render_review_markup.py`, then use the marked images plus separate text comments as the retouch/regeneration reference.
+- Keep slide identifiers, candidate codes, filenames, and generation batch labels outside the image-generation prompt body. They may appear in planning files, filenames, mapping tables, and chat instructions, but the prompt sent to the image model should contain only audience-facing content and visual direction.
 - Before full generation, ask whether the user wants one final image per slide or multiple final candidates per slide.
+- Multi-candidate selection happens in the folder and in chat: give the candidate folder path, let the user reply with one line per slide such as `S01-03`, and map those codes to filenames. Do not build a candidate-picker HTML page.
 - Do not export the final PPT immediately after first-pass generation; export only after the reviewed pages are approved.
 
 ## Output Hierarchy
@@ -70,3 +72,7 @@ Use these layers consistently:
 - `spec_lock.md` = execution constraints and final generation guardrails.
 
 `content_report.md` supports the 3 core planning files; it does not replace them. `spec_lock.md` is always the last core planning file.
+
+## Legacy Assets
+
+The bundled `assets/preview_shell/`, `assets/candidate_picker_shell/`, `assets/review_shell/` and `scripts/render_review_markup.py` are retained for reference only. This workflow no longer uses any HTML shell or coordinate-markup payload; do not reintroduce them unless the user explicitly asks for a browser-based variant.
